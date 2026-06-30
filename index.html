@@ -3,8 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>S1-M1 -- Chi e il preposto nel sistema di prevenzione</title>
+<title>S1-M1 -- Missione Preposto</title>
 <style>
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: Arial, sans-serif;
@@ -110,141 +111,305 @@
     cursor: pointer;
   }
   .retry-btn:hover { background: #2E74B5; }
+
+
+/* Estensioni visuali per il gioco interattivo */
+.scene-title { font-size: 18px; color:#1F4E79; margin-bottom:8px; font-weight:800; }
+.scene-lead { font-size: 14px; color:#555; line-height:1.5; margin-bottom:18px; }
+.game-stage { display:none; }
+.game-stage.active { display:block; animation: fadeIn .25s ease; }
+@keyframes fadeIn { from {opacity:0; transform:translateY(6px)} to {opacity:1; transform:translateY(0)} }
+.visual-board {
+  background: linear-gradient(180deg,#f7fbff,#eef4fb);
+  border: 2px solid #d0d8e4;
+  border-radius: 12px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+.factory {
+  display:grid;
+  grid-template-columns: repeat(4,1fr);
+  gap:12px;
+  align-items:stretch;
+}
+.zone {
+  min-height:112px;
+  border:2px dashed #b8c7d9;
+  border-radius:12px;
+  background:#fff;
+  padding:12px;
+  text-align:center;
+  cursor:pointer;
+  transition: all .2s;
+  position:relative;
+}
+.zone:hover, .zone.selected { border-color:#2E74B5; background:#e8f0fc; transform:translateY(-2px); }
+.zone.correct { background:#e6f4ea; border-color:#34A853; }
+.zone.wrong { background:#fce8e6; border-color:#EA4335; }
+.zone .icon { font-size:32px; display:block; margin-bottom:8px; }
+.zone .label { font-weight:700; font-size:13px; color:#1a1a1a; }
+.zone .small { font-size:12px; color:#666; margin-top:5px; line-height:1.35; }
+.stack { display:flex; flex-direction:column; gap:10px; max-width:420px; margin:0 auto; }
+.stack-item {
+  background:#fff; border:2px solid #d0d8e4; border-radius:12px;
+  padding:14px 16px; cursor:pointer; transition:all .2s;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.stack-item:hover { background:#e8f0fc; border-color:#2E74B5; }
+.stack-item.correct { background:#e6f4ea; border-color:#34A853; }
+.stack-item.wrong { background:#fce8e6; border-color:#EA4335; }
+.stack-item strong { color:#1F4E79; font-size:15px; }
+.stack-item span { font-size:28px; }
+.people-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.person-card {
+  background:#fff; border:2px solid #d0d8e4; border-radius:12px;
+  padding:14px; text-align:center; cursor:pointer; transition:all .2s;
+}
+.person-card:hover, .person-card.selected { background:#e8f0fc; border-color:#2E74B5; transform:translateY(-2px); }
+.person-card.correct { background:#e6f4ea; border-color:#34A853; }
+.person-card.wrong { background:#fce8e6; border-color:#EA4335; }
+.person-card .avatar { font-size:38px; margin-bottom:8px; }
+.person-card h3 { font-size:14px; color:#1F4E79; margin-bottom:6px; }
+.person-card p { font-size:12.5px; color:#555; line-height:1.35; }
+.action-row { display:flex; justify-content:space-between; align-items:center; gap:12px; margin-top:14px; }
+.check-btn {
+  background:#C05500; color:#fff; border:none; border-radius:8px;
+  padding:11px 22px; font-size:14px; font-weight:700; cursor:pointer;
+}
+.check-btn:hover { background:#d86b12; }
+.pill {
+  display:inline-block; background:#E2EAF4; color:#1F4E79;
+  border-radius:20px; padding:6px 10px; font-size:12px; font-weight:700;
+}
+.mission-feedback {
+  margin-top:14px; padding:12px 16px; border-radius:8px;
+  font-size:13.5px; line-height:1.5; display:none;
+}
+.mission-feedback.show { display:block; }
+.mission-feedback.ok { background:#e6f4ea; border-left:4px solid #34A853; color:#1a5c29; }
+.mission-feedback.ko { background:#fce8e6; border-left:4px solid #EA4335; color:#7a1c14; }
+.start-panel { text-align:center; padding:16px 10px 6px; }
+.start-hero { font-size:64px; margin:10px 0; }
+.start-btn {
+  background:#1F4E79; color:#fff; border:none; border-radius:8px;
+  padding:12px 30px; font-size:14px; font-weight:800; cursor:pointer;
+}
+.start-btn:hover { background:#2E74B5; }
+@media (max-width:700px) {
+  .factory, .people-grid { grid-template-columns:1fr; }
+  .body { padding:22px 18px 16px; }
+}
 </style>
 </head>
 <body>
 <div class="card">
   <div class="header">
-    <div class="badge">S1-M1 &nbsp;|&nbsp; Modulo 1.1</div>
-    <h1>Chi e il preposto nel sistema di prevenzione</h1>
-    <div class="sub">Sezione 1 - Ruolo, obblighi e responsabilita</div>
+    <div class="badge">S1-M1 &nbsp;|&nbsp; Gioco interattivo</div>
+    <h1>Missione Preposto: riconosci il ruolo sul campo</h1>
+    <div class="sub">Sezione 1 - Ruolo, obblighi e responsabilità</div>
   </div>
   <div class="progress-bar-wrap">
     <div class="progress-bar" id="pbar" style="width:0%"></div>
   </div>
 
-  <!-- QUIZ -->
   <div id="quiz-area">
     <div class="body">
-      <div class="q-counter" id="qcount"></div>
-      <div class="q-text" id="qtext"></div>
-      <div class="options" id="opts"></div>
-      <div class="feedback" id="feedback"></div>
+
+      <section class="game-stage active" id="stage-0">
+        <div class="start-panel">
+          <div class="q-counter">Briefing iniziale</div>
+          <div class="start-hero">🦺</div>
+          <div class="scene-title">Entra nel reparto e osserva cosa succede</div>
+          <div class="scene-lead">
+            Non risponderai a semplici domande a scelta multipla: dovrai cliccare sulle situazioni,
+            individuare la posizione corretta nella gerarchia e riconoscere chi assume obblighi di preposto.
+          </div>
+          <button class="start-btn" onclick="goStage(1)">Inizia la missione</button>
+        </div>
+      </section>
+
+      <section class="game-stage" id="stage-1">
+        <div class="q-counter">Missione 1 di 3 · Hotspot</div>
+        <div class="scene-title">Quali segnali indicano che Mario agisce da preposto di fatto?</div>
+        <div class="scene-lead">Clicca sulle azioni realmente rilevanti. Puoi selezionare più elementi.</div>
+        <div class="visual-board">
+          <div class="factory" id="hotspots">
+            <div class="zone" data-correct="true"><span class="icon">📋</span><div class="label">Assegna i lavori</div><div class="small">Distribuisce compiti ai colleghi</div></div>
+            <div class="zone" data-correct="true"><span class="icon">👀</span><div class="label">Vigila sull’esecuzione</div><div class="small">Controlla che il lavoro sia fatto correttamente</div></div>
+            <div class="zone" data-correct="false"><span class="icon">🖊️</span><div class="label">Ha una nomina scritta</div><div class="small">Utile, ma non indispensabile per il ruolo di fatto</div></div>
+            <div class="zone" data-correct="false"><span class="icon">🤝</span><div class="label">Assume i colleghi</div><div class="small">Non è questo il criterio del preposto</div></div>
+          </div>
+        </div>
+        <div class="action-row"><span class="pill">Obiettivo: trova 2 segnali corretti</span><button class="check-btn" onclick="checkMulti('hotspots', 1)">Verifica</button></div>
+        <div class="mission-feedback" id="fb-1"></div>
+      </section>
+
+      <section class="game-stage" id="stage-2">
+        <div class="q-counter">Missione 2 di 3 · Mappa gerarchica</div>
+        <div class="scene-title">Dove si colloca il preposto nella sicurezza aziendale?</div>
+        <div class="scene-lead">Clicca sul livello corretto della catena operativa.</div>
+        <div class="visual-board">
+          <div class="stack" id="hierarchy">
+            <div class="stack-item" data-correct="false"><strong>Datore di lavoro / Dirigente</strong><span>🏢</span></div>
+            <div class="stack-item" data-correct="true"><strong>Preposto: figura di cerniera operativa</strong><span>🦺</span></div>
+            <div class="stack-item" data-correct="false"><strong>Lavoratori</strong><span>👷</span></div>
+            <div class="stack-item" data-correct="false"><strong>Consulente esterno senza vigilanza quotidiana</strong><span>💼</span></div>
+          </div>
+        </div>
+        <div class="mission-feedback" id="fb-2"></div>
+      </section>
+
+      <section class="game-stage" id="stage-3">
+        <div class="q-counter">Missione 3 di 3 · Schede personaggio</div>
+        <div class="scene-title">Chi ha comunque obblighi di preposto, anche senza nomina formale?</div>
+        <div class="scene-lead">Seleziona la persona corretta tra le schede del reparto.</div>
+        <div class="visual-board">
+          <div class="people-grid" id="people">
+            <div class="person-card" data-correct="false">
+              <div class="avatar">👴</div><h3>Il più anziano</h3>
+              <p>Lavora da più anni, ma non coordina né vigila sul gruppo.</p>
+            </div>
+            <div class="person-card" data-correct="true">
+              <div class="avatar">🧭</div><h3>Chi coordina di fatto</h3>
+              <p>Organizza il lavoro, sovrintende e controlla l’attività quotidiana.</p>
+            </div>
+            <div class="person-card" data-correct="false">
+              <div class="avatar">🧑‍💻</div><h3>Risorse umane</h3>
+              <p>Gestisce documenti e contratti, ma non segue il reparto operativo.</p>
+            </div>
+          </div>
+        </div>
+        <div class="mission-feedback" id="fb-3"></div>
+      </section>
+
     </div>
     <div class="footer">
-      <button class="next-btn" id="nextbtn" onclick="next()">Prossima domanda &rarr;</button>
+      <button class="next-btn" id="nextbtn" onclick="nextStage()">Continua &rarr;</button>
     </div>
   </div>
 
-  <!-- RISULTATO -->
   <div class="result-screen" id="result-screen">
     <div class="score-ring" id="score-ring"></div>
     <h2 id="res-title"></h2>
     <p id="res-msg"></p>
-    <button class="retry-btn" onclick="restart()">Riprova</button>
+    <button class="retry-btn" onclick="restart()">Rigioca</button>
   </div>
 </div>
 
 <script>
-const Q = [
-  {
-    "testo": "Mario coordina di fatto 5 colleghi in officina, assegna i lavori e verifica che vengano eseguiti correttamente. Non ha mai ricevuto una nomina scritta come preposto. Ha obblighi di preposto?",
-    "opzioni": [
-      "No, senza nomina scritta non ha nessun obbligo",
-      "Si, perche esercita di fatto poteri di coordinamento e vigilanza",
-      "Solo se il datore lo inserisce nel libro matricola come preposto",
-      "Solo per i colleghi che ha assunto personalmente"
-    ],
-    "corretta": 1,
-    "spiegazione": "La nomina di fatto scatta quando si svolgono concretamente funzioni di supervisione, indipendentemente da una nomina formale scritta."
-  },
-  {
-    "testo": "Nella gerarchia aziendale della sicurezza, come si posiziona il preposto?",
-    "opzioni": [
-      "Allo stesso livello del dirigente, con competenze diverse",
-      "Tra il dirigente e i lavoratori, come figura operativa di cerniera",
-      "Al di sotto dei lavoratori con piu anzianita",
-      "Fuori dalla catena gerarchica, con ruolo solo consultivo"
-    ],
-    "corretta": 1,
-    "spiegazione": "Il preposto e il collegamento operativo tra le decisioni del dirigente e il lavoro quotidiano dei lavoratori: coordina, vigila e segnala."
-  },
-  {
-    "testo": "Il datore di lavoro non ha ancora nominato formalmente un preposto nel reparto. Chi ha comunque obblighi di preposto?",
-    "opzioni": [
-      "Nessuno, finche non c'e nomina formale scritta",
-      "Il lavoratore piu anziano del reparto in automatico",
-      "Chiunque eserciti di fatto poteri di sovrintendenza e coordinamento sul gruppo",
-      "Solo il responsabile delle risorse umane"
-    ],
-    "corretta": 2,
-    "spiegazione": "Il D.Lgs. 81/08 si basa sulla sostanza, non solo sulla forma: chi esercita di fatto il ruolo di preposto ne assume anche gli obblighi."
-  }
-];
-const TOTAL = Q.length;
-let cur = 0, score = 0, answered = false;
+let stage = 0;
+let score = 0;
+const TOTAL = 3;
+let locked = false;
 
-function render() {
-  if (cur >= TOTAL) { showResult(); return; }
-  answered = false;
-  const q = Q[cur];
-  document.getElementById('qcount').textContent = 'Domanda ' + (cur+1) + ' di ' + TOTAL;
-  document.getElementById('qtext').textContent = q.testo;
-  document.getElementById('pbar').style.width = (cur / TOTAL * 100) + '%';
-  const fb = document.getElementById('feedback');
-  fb.className = 'feedback'; fb.textContent = '';
+function setProgress() {
+  const completed = Math.max(0, stage - 1);
+  document.getElementById('pbar').style.width = Math.min(100, (completed / TOTAL) * 100) + '%';
+}
+
+function goStage(n) {
+  document.querySelectorAll('.game-stage').forEach(s => s.classList.remove('active'));
+  document.getElementById('stage-' + n).classList.add('active');
+  stage = n;
+  locked = false;
   document.getElementById('nextbtn').style.display = 'none';
+  setProgress();
+}
 
-  const opts = document.getElementById('opts');
-  opts.innerHTML = '';
-  q.opzioni.forEach(function(txt, i) {
-    const btn = document.createElement('button');
-    btn.className = 'opt-btn';
-    btn.textContent = String.fromCharCode(97+i) + ')  ' + txt;
-    btn.onclick = function() { answer(i); };
-    opts.appendChild(btn);
+document.querySelectorAll('.zone').forEach(el => {
+  el.addEventListener('click', () => {
+    if (locked) return;
+    el.classList.toggle('selected');
   });
+});
+
+document.querySelectorAll('.stack-item').forEach(el => {
+  el.addEventListener('click', () => {
+    if (locked) return;
+    locked = true;
+    const ok = el.dataset.correct === 'true';
+    el.classList.add(ok ? 'correct' : 'wrong');
+    document.querySelectorAll('#hierarchy .stack-item').forEach(item => {
+      if (item.dataset.correct === 'true') item.classList.add('correct');
+    });
+    showFeedback(2, ok,
+      'Corretto: il preposto sta tra dirigente/datore e lavoratori, come collegamento operativo.',
+      'Non proprio: il preposto è la figura di cerniera tra le decisioni del dirigente e il lavoro quotidiano.'
+    );
+  });
+});
+
+document.querySelectorAll('.person-card').forEach(el => {
+  el.addEventListener('click', () => {
+    if (locked) return;
+    locked = true;
+    const ok = el.dataset.correct === 'true';
+    el.classList.add(ok ? 'correct' : 'wrong');
+    document.querySelectorAll('#people .person-card').forEach(item => {
+      if (item.dataset.correct === 'true') item.classList.add('correct');
+    });
+    showFeedback(3, ok,
+      'Esatto: conta la funzione svolta concretamente, non solo la nomina scritta.',
+      'Attenzione: gli obblighi ricadono su chi esercita concretamente sovrintendenza e coordinamento.'
+    );
+  });
+});
+
+function checkMulti(containerId, fbNum) {
+  if (locked) return;
+  const cards = [...document.querySelectorAll('#' + containerId + ' .zone')];
+  const selected = cards.filter(c => c.classList.contains('selected'));
+  const ok = selected.length === cards.filter(c => c.dataset.correct === 'true').length &&
+             selected.every(c => c.dataset.correct === 'true');
+  locked = true;
+  cards.forEach(c => {
+    if (c.dataset.correct === 'true') c.classList.add('correct');
+    if (c.classList.contains('selected') && c.dataset.correct !== 'true') c.classList.add('wrong');
+  });
+  showFeedback(fbNum, ok,
+    'Corretto: assegnare lavori e vigilare sull’esecuzione sono segnali concreti di preposizione di fatto.',
+    'Quasi: i segnali chiave sono coordinamento operativo e vigilanza. La nomina scritta non è l’unico criterio.'
+  );
 }
 
-function answer(idx) {
-  if (answered) return;
-  answered = true;
-  const q = Q[cur];
-  const btns = document.querySelectorAll('.opt-btn');
-  btns.forEach(function(b) { b.disabled = true; });
-  const fb = document.getElementById('feedback');
-  if (idx === q.corretta) {
-    score++;
-    btns[idx].classList.add('correct');
-    fb.textContent = 'Corretto! ' + q.spiegazione;
-    fb.className = 'feedback ok show';
+function showFeedback(num, ok, good, bad) {
+  if (ok) score++;
+  const fb = document.getElementById('fb-' + num);
+  fb.className = 'mission-feedback show ' + (ok ? 'ok' : 'ko');
+  fb.textContent = ok ? good : bad;
+  document.getElementById('nextbtn').style.display = 'inline-block';
+}
+
+function nextStage() {
+  if (stage < TOTAL) {
+    goStage(stage + 1);
   } else {
-    btns[idx].classList.add('wrong');
-    btns[q.corretta].classList.add('correct');
-    fb.textContent = 'Risposta errata. Corretta: ' + String.fromCharCode(97+q.corretta) + '. ' + q.spiegazione;
-    fb.className = 'feedback ko show';
+    showResult();
   }
-  const nb = document.getElementById('nextbtn');
-  nb.style.display = 'inline-block';
-  nb.textContent = cur < TOTAL-1 ? 'Prossima domanda →' : 'Vedi risultato →';
 }
-
-function next() { cur++; render(); }
 
 function showResult() {
   document.getElementById('quiz-area').style.display = 'none';
+  document.getElementById('result-screen').style.display = 'block';
   document.getElementById('pbar').style.width = '100%';
-  const rs = document.getElementById('result-screen');
-  rs.style.display = 'block';
+
+  const pct = Math.round((score / TOTAL) * 100);
   const ring = document.getElementById('score-ring');
-  ring.textContent = score + '/' + TOTAL;
+  ring.textContent = pct + '%';
+
   let cls, title, msg;
-  if (score === TOTAL) {
-    cls='ring-pass'; title='Ottimo!'; msg='Hai risposto correttamente a tutte le domande.';
-  } else if (score >= Math.ceil(TOTAL*0.6)) {
-    cls='ring-partial'; title='Buono!'; msg='Hai risposto correttamente a ' + score + ' domande su ' + TOTAL + '. Ripasssa i punti in cui hai sbagliato.';
+  if (pct === 100) {
+    cls = 'ring-pass';
+    title = 'Missione completata';
+    msg = 'Hai riconosciuto correttamente ruolo, posizione e obblighi del preposto.';
+  } else if (pct >= 60) {
+    cls = 'ring-partial';
+    title = 'Buon risultato';
+    msg = 'Hai superato la missione, ma puoi rigiocare per consolidare i passaggi più delicati.';
   } else {
-    cls='ring-fail'; title='Da rivedere'; msg='Hai risposto correttamente a ' + score + ' domande su ' + TOTAL + '. Ti consigliamo di ripassare il modulo.';
+    cls = 'ring-fail';
+    title = 'Da ripassare';
+    msg = 'Rivedi il concetto di preposto di fatto: contano coordinamento, sovrintendenza e vigilanza concreta.';
   }
   ring.className = 'score-ring ' + cls;
   document.getElementById('res-title').textContent = title;
@@ -252,13 +417,13 @@ function showResult() {
 }
 
 function restart() {
-  cur=0; score=0; answered=false;
-  document.getElementById('result-screen').style.display='none';
-  document.getElementById('quiz-area').style.display='block';
-  render();
+  stage = 0; score = 0; locked = false;
+  document.querySelectorAll('.selected,.correct,.wrong').forEach(el => el.classList.remove('selected','correct','wrong'));
+  document.querySelectorAll('.mission-feedback').forEach(el => { el.className = 'mission-feedback'; el.textContent=''; });
+  document.getElementById('result-screen').style.display = 'none';
+  document.getElementById('quiz-area').style.display = 'block';
+  goStage(0);
 }
-
-render();
 </script>
 </body>
 </html>
