@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>S1-M1 - Il Preposto nel Sistema di Prevenzione</title>
+<title>S1-M1 - Preposto Simulator</title>
 <style>
-  /* Reset e Layout Base */
   * { margin: 0; padding: 0; box-sizing: border-box; }
   
   body {
     font-family: 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #1a237e, #283593, #5c6bc0);
+    background: linear-gradient(135deg, #1a237e, #283593);
     min-height: 100vh;
     overflow: hidden;
     display: flex;
@@ -18,160 +17,151 @@
     align-items: center;
   }
 
-  /* Container Principale Bloccato a 800x550 */
   .container {
-    background: #fff;
+    background: #f1f5f9;
     width: 800px;
     height: 550px;
     display: flex;
     flex-direction: column;
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
   }
 
-  /* Header Standard */
+  /* Header */
   .header {
-    background: linear-gradient(135deg, #1a237e, #283593);
+    background: #1a237e;
     color: #fff;
-    padding: 11px 18px;
+    padding: 12px 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-shrink: 0;
+    border-bottom: 3px solid #d97706;
   }
-  .header h1 { font-size: 15px; font-weight: 700; }
-  .header p  { font-size: 11px; opacity: .8; margin-top: 1px; }
-  
-  .btn-group { display: flex; gap: 8px; }
+  .header h1 { font-size: 16px; font-weight: 700; letter-spacing: 0.5px; }
   .btn-outline {
     background: transparent; border: 1px solid #fff; color: #fff;
     padding: 5px 12px; border-radius: 4px; font-size: 11px; cursor: pointer;
     font-weight: 600; transition: all 0.2s;
   }
   .btn-outline:hover { background: rgba(255,255,255,0.15); }
-  
-  .btn-white {
-    background: #fff; border: none; color: #1a237e;
-    padding: 5px 12px; border-radius: 4px; font-size: 11px; cursor: pointer;
-    font-weight: 600; transition: all 0.2s;
-  }
-  .btn-white:hover { background: #f0f0f0; }
 
   /* Schermata Intro */
-  .instr {
-    padding: 22px 28px;
-    overflow-y: auto;
-    flex: 1;
+  .screen-intro {
+    padding: 30px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    height: 100%;
+    background: #fff;
   }
-  .instr h2 { font-size: 22px; color: #1a237e; margin-bottom: 6px; }
-  .instr p { font-size: 13.5px; line-height: 1.5; color: #444; margin-bottom: 10px; }
+  .intro-title { color: #1a237e; font-size: 24px; font-weight: 700; margin-bottom: 10px; }
+  .intro-desc { color: #475569; font-size: 14.5px; line-height: 1.6; }
   
-  .how-grid { display: flex; gap: 12px; margin: 10px 0; }
-  .how-step {
-    flex: 1; background: #e8eaf6; border-radius: 8px;
-    padding: 12px; text-align: center;
-    font-size: 12px; color: #1a237e; font-weight: 600; line-height: 1.4;
+  .mechanic-box {
+    background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;
+    padding: 15px; margin: 15px 0; display: flex; gap: 15px;
   }
-  .how-step .num { font-size: 22px; display: block; margin-bottom: 4px; color: #283593; }
+  .mech-item { flex: 1; text-align: center; font-size: 13px; color: #1e293b; }
+  .mech-item strong { color: #1a237e; display: block; margin-bottom: 5px; font-size: 14px; }
 
-  .start-btn {
-    background: linear-gradient(135deg, #1a237e, #283593);
-    color: #fff; padding: 11px 36px; font-size: 14px;
-    border-radius: 8px; display: block; margin: 8px auto 0;
-    cursor: pointer; border: none; font-weight: 600; transition: all 0.2s;
+  .btn-start {
+    background: #d97706; color: white; border: none; padding: 12px 40px;
+    font-size: 15px; font-weight: 700; border-radius: 6px; cursor: pointer;
+    align-self: center; transition: background 0.2s;
   }
-  .start-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(26,35,126,0.3); }
+  .btn-start:hover { background: #b45309; }
 
-  /* Schermata Gioco (Scenario Layout) */
-  .game-layout {
-    padding: 18px 24px;
-    flex: 1;
+  /* Dashboard Gioco */
+  .game-grid {
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    flex: 1;
+    height: calc(100% - 48px);
     overflow: hidden;
   }
-  
-  .status-bar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 12px;
-    color: #555;
-    margin-bottom: 10px;
-    font-weight: 600;
-  }
-  .progress-wrap { background: #e0e0e0; height: 6px; border-radius: 3px; flex: 1; margin: 0 15px; overflow: hidden; }
-  .progress-fill { background: #283593; height: 100%; width: 0%; transition: width 0.3s; }
-  
-  .scenario-card {
-    background: #f8fafc;
-    border-radius: 8px;
-    padding: 14px 18px;
-    min-height: 85px;
-    font-size: 14px;
-    line-height: 1.5;
-    color: #1a1a1a;
-    font-weight: 600;
-    margin-bottom: 12px;
-    border-left: 4px solid #1a237e;
-  }
-  
-  .options-list { display: flex; flex-direction: column; gap: 8px; }
-  .opt-btn {
-    background: #fff; border: 1px solid #c5cae9;
-    border-radius: 6px; padding: 11px 14px;
-    font-size: 13px; color: #333; text-align: left;
-    cursor: pointer; transition: all 0.2s; line-height: 1.4;
-    width: 100%; font-family: inherit;
-  }
-  .opt-btn:hover:not(:disabled) { background: #e8eaf6; border-color: #1a237e; }
-  .opt-btn:disabled { cursor: default; }
-  .opt-btn.correct { background: #e8f5e9; border-color: #2e7d32; color: #1b5e20; font-weight: 600; }
-  .opt-btn.wrong { background: #ffebee; border-color: #c62828; color: #b71c1c; }
-  
-  .feedback-box {
-    margin-top: 10px; padding: 10px 14px; border-radius: 6px;
-    font-size: 12.5px; line-height: 1.45; display: none;
-  }
-  .feedback-box.correct-fb { display: block; background: #e8f5e9; border-left: 4px solid #2e7d32; color: #1b5e20; }
-  .feedback-box.wrong-fb { display: block; background: #ffebee; border-left: 4px solid #c62828; color: #b71c1c; }
-  
-  .next-btn {
-    background: linear-gradient(135deg, #1a237e, #283593);
-    color: #fff; border: none; border-radius: 6px;
-    padding: 10px 24px; font-size: 13px; font-weight: 600;
-    cursor: pointer; display: block; margin: 8px 0 0 auto; transition: opacity 0.2s;
-  }
-  .next-btn:hover { opacity: 0.9; }
 
-  /* Schermata Risultati */
-  .result-layout {
-    padding: 30px 24px;
-    text-align: center;
-    flex: 1;
+  /* Barra laterale - Indicatori */
+  .sidebar {
+    width: 240px;
+    background: #fff;
+    border-right: 1px solid #e2e8f0;
+    padding: 20px 15px;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    gap: 25px;
   }
-  .emoji-box { font-size: 55px; margin-bottom: 10px; }
-  .result-layout h2 { font-size: 22px; color: #1a237e; margin-bottom: 6px; }
-  .result-layout p { font-size: 14.5px; color: #555; margin-bottom: 24px; max-width: 520px; line-height: 1.5; }
+  .widget-title { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
   
-  .retry-btn {
-    background: linear-gradient(135deg, #1a237e, #283593);
-    color: #fff; border: none; border-radius: 6px;
-    padding: 11px 36px; font-size: 14px; font-weight: 600;
-    cursor: pointer; transition: all 0.2s;
-  }
-  .retry-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(26,35,126,0.2); }
+  .gauge-container { margin-top: 8px; }
+  .gauge-label { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; margin-bottom: 5px; color: #334155; }
+  .gauge-bar { background: #e2e8f0; height: 14px; border-radius: 7px; overflow: hidden; position: relative; }
+  .gauge-fill { height: 100%; width: 0%; transition: width 0.5s ease-out, background-color 0.3s; }
+  
+  /* Colori dinamici dei gauge */
+  .fill-safety { background-color: #22c55e; }
+  .fill-risk { background-color: #ef4444; }
 
-  /* Utility Class */
+  /* Area Principale dello Scenario */
+  .main-stage {
+    flex: 1;
+    padding: 20px 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow-y: auto;
+  }
+
+  .log-badge {
+    background: #e0e7ff; color: #4338ca; font-size: 11px; font-weight: 700;
+    padding: 4px 10px; border-radius: 4px; display: inline-block; margin-bottom: 10px;
+  }
+
+  .scenario-text {
+    font-size: 15px; color: #1e293b; font-weight: 600; line-height: 1.5;
+    margin-bottom: 15px; background: #fff; padding: 15px; border-radius: 8px;
+    border-left: 4px solid #d97706; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  }
+
+  .choices-container { display: flex; flex-direction: column; gap: 10px; }
+  .choice-row {
+    background: #fff; border: 1px solid #cbd5e1; border-radius: 8px;
+    padding: 12px 15px; font-size: 13px; color: #334155; cursor: pointer;
+    transition: all 0.2s; text-align: left; width: 100%; font-family: inherit;
+    line-height: 1.4;
+  }
+  .choice-row:hover:not(:disabled) { border-color: #1a237e; background: #f8fafc; transform: translateX(3px); }
+  .choice-row:disabled { cursor: default; }
+  
+  /* Stati post-risposta */
+  .choice-row.selected-correct { background: #f0fdf4; border-color: #22c55e; color: #15803d; font-weight: 600; }
+  .choice-row.selected-wrong { background: #fef2f2; border-color: #ef4444; color: #b91c1c; }
+  .choice-row.reveal-correct { background: #f0fdf4; border-color: #22c55e; color: #15803d; }
+
+  /* Feedback in tempo reale */
+  .feedback-banner {
+    padding: 12px; border-radius: 6px; font-size: 12.5px; line-height: 1.45;
+    margin-top: 12px; display: none;
+  }
+  .fb-good { display: block; background: #dcfce7; color: #15803d; border-left: 3px solid #22c55e; }
+  .fb-bad { display: block; background: #fee2e2; color: #b91c1c; border-left: 3px solid #ef4444; }
+
+  .btn-next {
+    background: #1a237e; color: white; border: none; padding: 10px 20px;
+    border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer;
+    margin-top: 10px; align-self: flex-end; transition: opacity 0.2s;
+  }
+  .btn-next:hover { opacity: 0.9; }
+
+  /* Schermata Finale */
+  .screen-results {
+    padding: 40px; text-align: center; height: 100%;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: #fff;
+  }
+  .result-icon { font-size: 50px; margin-bottom: 15px; }
+  .result-title { font-size: 24px; color: #1a237e; font-weight: 700; margin-bottom: 10px; }
+  .result-desc { font-size: 14px; color: #475569; max-width: 500px; line-height: 1.6; margin-bottom: 25px; }
+
   .hidden { display: none !important; }
 </style>
 </head>
@@ -179,108 +169,172 @@
 
 <div class="container">
   <div class="header">
-    <div>
-      <h1>⚖️ Scenario Didattico — Modulo 1.1</h1>
-      <p>Chi è il preposto nel sistema di prevenzione aziendale</p>
-    </div>
-    <div class="btn-group">
-      <button class="btn-outline" onclick="resetGame()">🔄 Rigioca</button>
-      <button class="btn-white" onclick="window.close()">Torna al corso</button>
-    </div>
+    <h1>🕹️ Preposto Simulator v1.0 — Impatto Decisionale</h1>
+    <button class="btn-outline" onclick="resetGame()">🔄 Riavvia</button>
   </div>
 
-  <div id="instrPage" class="instr">
+  <div id="introScreen" class="screen-intro">
     <div>
-      <h2>Analizza i Casi Aziendali</h2>
-      <p>Benvenuto nell'applicazione interattiva dedicata al ruolo del <strong>Preposto</strong> ai sensi del D.Lgs. 81/08. In questo modulo affronterai scenari reali legati alle responsabilità, alla gerarchia della sicurezza e al principio di effettività.</p>
-      <p>Come responsabile della sicurezza sul campo, avrai il compito di valutare ciascuna situazione aziendale e prendere la decisione corretta basandoti sulla normativa vigente.</p>
+      <h2 class="intro-title">Gestione della Sicurezza sul Campo</h2>
+      <p class="intro-desc">In questo simulatore non ti limiterai a rispondere a un quiz. Assumerai il controllo di dinamiche aziendali reali legate al ruolo del <strong>Preposto (D.Lgs. 81/08)</strong>. Ogni tua decisione influenzerà l'equilibrio della tua azienda.</p>
       
-      <div class="how-grid">
-        <div class="how-step">
-          <span class="num">1</span>
-          Leggi accuratamente il caso pratico descritto nella scheda.
+      <div class="mechanic-box">
+        <div class="mech-item">
+          <strong>🛡️ Sicurezza sul Campo</strong>
+          Rappresenta la tutela effettiva dei lavoratori. Se scende a zero, rischi l'incidente.
         </div>
-        <div class="how-step">
-          <span class="num">2</span>
-          Seleziona la risposta corretta tra le opzioni proposte.
-        </div>
-        <div class="how-step">
-          <span class="num">3</span>
-          Esamina il feedback formativo per consolidare l'apprendimento.
+        <div class="mech-item">
+          <strong>⚖️ Rischio Sanzioni</strong>
+          Misura l'esposizione penale e civile dovuta al principio di effettività. Tienila al minimo!
         </div>
       </div>
+      <p class="intro-desc" style="font-size: 13px; color: #64748b;">Nota: Il sistema traccia le risposte corrette secondo i criteri giuridici del principio del "Preposto di Fatto".</p>
     </div>
-    <button class="start-btn" onclick="startGame()">▶ Inizia il Gioco</button>
+    <button class="btn-start" onclick="startGame()">Avvia Simulazione</button>
   </div>
 
-  <div id="gamePage" class="game-layout hidden">
-    <div class="status-bar">
-      <span id="caseCounter">Scenario 1 di 3</span>
-      <div class="progress-wrap">
-        <div id="progressFill" class="progress-fill"></div>
+  <div id="gameScreen" class="game-grid hidden">
+    <div class="sidebar">
+      <div>
+        <h3 class="widget-title">Monitor di Reparto</h3>
+        
+        <div class="gauge-container">
+          <div class="gauge-label">
+            <span>🛡️ Sicurezza Operativa</span>
+            <span id="txtSafety">50%</span>
+          </div>
+          <div class="gauge-bar">
+            <div id="barSafety" class="gauge-fill fill-safety" style="width: 50%;"></div>
+          </div>
+        </div>
+
+        <div class="gauge-container" style="margin-top: 20px;">
+          <div class="gauge-label">
+            <span>⚖️ Rischio Sanzioni</span>
+            <span id="txtRisk">0%</span>
+          </div>
+          <div class="gauge-bar">
+            <div id="barRisk" class="gauge-fill fill-risk" style="width: 0%;"></div>
+          </div>
+        </div>
       </div>
-      <span id="scoreCounter">Corrette: 0</span>
+
+      <div style="margin-top: auto; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+        <p style="font-size: 11px; color: #64748b; line-height: 1.4;" id="turnIndicator">Turno operativo: 1 / 3</p>
+      </div>
     </div>
 
-    <div id="scenarioCard" class="scenario-card">
+    <div class="main-stage">
+      <div>
+        <span class="log-badge" id="scenarioBadge">CASO OPERATIVO</span>
+        <div id="scenarioText" class="scenario-text">Caricamento scenario...</div>
+        <div id="choicesContainer" class="choices-container"></div>
+        <div id="feedbackBanner" class="feedback-banner"></div>
       </div>
-
-    <div id="optionsList" class="options-list">
-      </div>
-
-    <div id="feedbackBox" class="feedback-box">
-      </div>
-
-    <button id="nextBtn" class="next-btn hidden" onclick="nextScenario()">Scenario successivo →</button>
+      
+      <button id="btnNext" class="btn-next hidden" onclick="advanceTour()">Prosegui il turno →</button>
+    </div>
   </div>
 
-  <div id="resultPage" class="result-layout hidden">
-    <div id="resultEmoji" class="emoji-box">🏆</div>
-    <h2 id="resultTitle">Ottimo lavoro!</h2>
-    <p id="resultMsg">Hai completato tutti gli scenari operativi con successo.</p>
-    <button class="retry-btn" onclick="resetGame()">🔄 Riprova il modulo</button>
+  <div id="resultScreen" class="screen-results hidden">
+    <div id="resIcon" class="result-icon">🏆</div>
+    <h2 id="resTitle" class="result-title">Analisi Conclusa</h2>
+    <p id="resDesc" class="result-desc">Descrizione dei risultati.</p>
+    <button class="btn-start" onclick="resetGame()">Ricomincia Simulazione</button>
   </div>
 </div>
 
 <script>
-// Array Dati degli Scenari didattici (estratti dal documento S1-M1)
-const MASTER_SCENARIOS = [
+// Database degli Scenari con logica di impatto sulle variabili della simulazione
+const SCENARIOS = [
   {
-    text: "Mario coordina di fatto 5 colleghi in officina, assegna i lavori e verifica che vengano eseguiti correttamente. Non ha mai ricevuto una nomina scritta come preposto. Qual è la sua situazione riguardo agli obblighi di prevenzione?",
-    options: [
-      { text: "Non ha alcun obbligo o responsabilità, poiché manca un atto di nomina formale firmato dal datore di lavoro.", correct: false },
-      { text: "Sì, ha gli obblighi di preposto poiché esercita di fatto poteri di coordinamento, sovrintendenza e vigilanza sul gruppo.", correct: true },
-      { text: "I suoi obblighi scattano solo se il datore di lavoro decide di inserirlo ufficialmente nel libro matricola come preposto.", correct: false }
-    ],
-    explanation: "La nomina di fatto (Principio di Effettività) si attiva quando si svolgono concretamente funzioni di supervisione e controllo, indipendentemente da una formalizzazione scritta."
+    text: "Mario coordina di fatto 5 colleghi in officina, assegna i compiti e verifica le lavorazioni, ma non ha mai ricevuto una nomina scritta. Come si configura la sua responsabilità?",
+    choices: [
+      {
+        text: "Mancando la nomina formale scritta del datore di lavoro, Mario non rischia nulla legalmente e non ha obblighi di vigilanza.",
+        correct: false,
+        impactSafety: -20,
+        impactRisk: +40,
+        feedback: "Errore di valutazione! In base al Principio di Effettività (Art. 299 D.Lgs. 81/08), l'esercizio concreto dei poteri genera la responsabilità da preposto, esponendolo a sanzioni pur in assenza di carte."
+      },
+      {
+        text: "Esercitando poteri di sovrintendenza e controllo, assume automaticamente la figura di 'preposto di fatto' con tutti i relativi obblighi di legge.",
+        correct: true,
+        impactSafety: +30,
+        impactRisk: 0,
+        feedback: "Ottima analisi legale. Il diritto della sicurezza si basa sulla sostanza delle mansioni: chi guida e vigila sul campo è legalmente un preposto a tutti gli effetti."
+      },
+      {
+        text: "Le responsabilità scattano solo se viene inserito formalmente nell'organigramma o se accetta un aumento retributivo per il ruolo.",
+        correct: false,
+        impactSafety: -10,
+        impactRisk: +30,
+        feedback: "Sbagliato. Né l'organigramma né la retribuzione condizionano la qualifica penale di preposto se l'attività di vigilanza viene eseguita nei fatti."
+      }
+    ]
   },
   {
-    text: "Durante una sessione di coordinamento sulla sicurezza aziendale, si discute dell'organigramma della prevenzione. In quale posizione si colloca esattamente la figura del preposto?",
-    options: [
-      { text: "Allo stesso livello del dirigente, condividendo le medesime competenze decisionali ed economiche.", correct: false },
-      { text: "Agisce come figura operativa di cerniera, posizionandosi esattamente tra il dirigente e i lavoratori.", correct: true },
-      { text: "Al di fuori della catena gerarchica aziendale, ricoprendo un ruolo puramente consultivo e senza poteri operativi.", correct: false }
-    ],
-    explanation: "Il preposto è l'anello di congiunzione sul campo: traduce le direttive dei dirigenti in pratica operativa e vigila sulla corretta esecuzione in sicurezza da parte dei lavoratori."
+    text: "Nell'organigramma aziendale della sicurezza si deve stabilire l'esatta linea gerarchica del preposto. Dove va collocato per legge?",
+    choices: [
+      {
+        text: "Sullo stesso identico piano funzionale del Dirigente e del Datore di Lavoro, avendo autonomia di spesa.",
+        correct: false,
+        impactSafety: -10,
+        impactRisk: +20,
+        feedback: "Inesatto. Il preposto non ha i poteri decisionali ed economici strutturali del Dirigente o del Datore di Lavoro."
+      },
+      {
+        text: "Come figura operativa intermedia ('cerniera'), posizionata esattamente tra i dirigenti e i lavoratori sul campo.",
+        correct: true,
+        impactSafety: +30,
+        impactRisk: 0,
+        feedback: "Esatto! È la figura di raccordo deputata a far rispettare le direttive dei superiori vigilando direttamente sui lavoratori."
+      },
+      {
+        text: "Al di fuori della catena di comando, con compiti puramente di consulenza tecnica privi di potere di vigilanza.",
+        correct: false,
+        impactSafety: -30,
+        impactRisk: +30,
+        feedback: "Risposta errata. Il preposto ha un preciso obbligo gerarchico di vigilanza e sovrintendenza attiva, non è un consulente esterno."
+      }
+    ]
   },
   {
-    text: "In un determinato reparto operativo dell'azienda, il datore di lavoro non ha ancora provveduto a individuare o nominare formalmente alcun preposto. In questo contesto, chi assume le responsabilità del ruolo?",
-    options: [
-      { text: "Nessuno può essere sanzionato o ritenuto responsabile fino a quando non viene prodotta una designazione scritta.", correct: false },
-      { text: "Il lavoratore con la maggiore anzianità di servizio all'interno del reparto, in modalità del tutto automatica.", correct: false },
-      { text: "Chiunque all'interno del gruppo eserciti concretamente e di fatto i poteri di sovrintendenza e coordinamento delle attività.", correct: true }
-    ],
-    explanation: "Il D.Lgs. 81/08 si basa sulla sostanza delle mansioni svolte: chi dirige materialmente le attività quotidiane si assume automaticamente anche i relativi obblighi di vigilanza."
+    text: "Un intero reparto operativo lavora senza che il Datore di Lavoro abbia mai designato formalmente un preposto. Cosa succede alle responsabilità di vigilanza?",
+    choices: [
+      {
+        text: "Le sanzioni sono sospese per tutti i componenti del reparto finché il Datore non firma una delega formale.",
+        correct: false,
+        impactSafety: -30,
+        impactRisk: +40,
+        feedback: "Assolutamente no! La legge non tollera vuoti di vigilanza. Il rischio penale e di infortuni in quel reparto schizza al massimo."
+      },
+      {
+        text: "La responsabilità si trasferisce in automatico ed esclusivamente al dipendente più anziano per età anagrafica.",
+        correct: false,
+        impactSafety: -15,
+        impactRisk: +20,
+        feedback: "Falso. L'anzianità anagrafica o di servizio non assegna automaticamente compiti di vigilanza penale in assenza di ruoli effettivi."
+      },
+      {
+        text: "Le responsabilità ricadono su chiunque, all'interno del gruppo, eserciti concretamente e nei fatti la direzione e la sovrintendenza del lavoro.",
+        correct: true,
+        impactSafety: +20,
+        impactRisk: 0,
+        feedback: "Corretto. Se c'è un coordinamento nei fatti, c'è un preposto di fatto. L'assenza di carte non cancella i doveri di sicurezza sul lavoro."
+      }
+    ]
   }
 ];
 
-let scenarios = [];
-let currentIdx = 0;
-let score = 0;
-let hasAnswered = false;
+let gameData = [];
+let currentTour = 0;
+let safetyScore = 50;
+let riskScore = 0;
+let correctAnswersCount = 0;
+let selectionMade = false;
 
-// Algoritmo di Shuffle Fisher-Yates per randomizzare l'ordine delle domande
-function shuffleData(array) {
+function shuffle(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [array[i], array[j]] = [array[j], array[i]];
@@ -288,132 +342,138 @@ function shuffleData(array) {
 }
 
 function startGame() {
-  document.getElementById('instrPage').classList.add('hidden');
-  document.getElementById('gamePage').classList.remove('hidden');
+  document.getElementById('introScreen').classList.add('hidden');
+  document.getElementById('gameScreen').classList.remove('hidden');
   
-  // Clona e mescola gli scenari ad inizio partita
-  scenarios = JSON.parse(JSON.stringify(MASTER_SCENARIOS));
-  shuffleData(scenarios);
+  gameData = JSON.parse(JSON.stringify(SCENARIOS));
+  shuffle(gameData);
   
-  currentIdx = 0;
-  score = 0;
-  loadScenario();
+  currentTour = 0;
+  safetyScore = 50;
+  riskScore = 0;
+  correctAnswersCount = 0;
+  
+  updateDashboardGauges();
+  loadTour();
 }
 
-function loadScenario() {
-  hasAnswered = false;
-  const current = scenarios[currentIdx];
+function updateDashboardGauges() {
+  // Cap del range tra 0 e 100
+  safetyScore = Math.max(0, Math.min(100, safetyScore));
+  riskScore = Math.max(0, Math.min(100, riskScore));
   
-  // Aggiornamento Status Bar
-  document.getElementById('caseCounter').textContent = `Scenario ${currentIdx + 1} di ${scenarios.length}`;
-  document.getElementById('scoreCounter').textContent = `Corrette: ${score}`;
-  const progressPct = (currentIdx / scenarios.length) * 100;
-  document.getElementById('progressFill').style.width = `${progressPct}%`;
+  document.getElementById('txtSafety').textContent = safetyScore + "%";
+  document.getElementById('barSafety').style.width = safetyScore + "%";
   
-  // Caricamento Testo Scenario e Reset UI
-  document.getElementById('scenarioCard').textContent = current.text;
-  document.getElementById('nextBtn').classList.add('hidden');
-  
-  const fbBox = document.getElementById('feedbackBox');
-  fbBox.className = 'feedback-box';
-  fbBox.innerHTML = '';
+  document.getElementById('txtRisk').textContent = riskScore + "%";
+  document.getElementById('barRisk').style.width = riskScore + "%";
+}
 
-  // Caricamento Opzioni
-  const optList = document.getElementById('optionsList');
-  optList.innerHTML = '';
+function loadTour() {
+  selectionMade = false;
+  document.getElementById('btnNext').classList.add('hidden');
   
-  current.options.forEach((opt, idx) => {
-    const button = document.createElement('button');
-    button.className = 'opt-btn';
-    button.textContent = `${String.fromCharCode(65 + idx)}) ${opt.text}`;
-    button.onclick = () => selectOption(idx, button);
-    optList.appendChild(button);
+  const banner = document.getElementById('feedbackBanner');
+  banner.className = 'feedback-banner';
+  banner.innerHTML = '';
+  
+  document.getElementById('turnIndicator').textContent = `Scenario operativo: ${currentTour + 1} / ${gameData.length}`;
+  
+  const currentScenario = gameData[currentTour];
+  document.getElementById('scenarioText').textContent = currentScenario.text;
+  
+  const containerChoices = document.getElementById('choicesContainer');
+  containerChoices.innerHTML = '';
+  
+  currentScenario.choices.forEach((choice, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-row';
+    btn.textContent = choice.text;
+    btn.onclick = () => handleChoice(idx, btn);
+    containerChoices.appendChild(btn);
   });
 }
 
-function selectOption(selectedIdx, clickedButton) {
-  if (hasAnswered) return;
-  hasAnswered = true;
+function handleChoice(chosenIdx, clickedBtn) {
+  if (selectionMade) return;
+  selectionMade = true;
   
-  const current = scenarios[currentIdx];
-  const buttons = document.querySelectorAll('.opt-btn');
-  const fbBox = document.getElementById('feedbackBox');
+  const scenario = gameData[currentTour];
+  const choice = scenario.choices[chosenIdx];
+  const allButtons = document.querySelectorAll('.choice-row');
   
-  // Disabilita tutti i bottoni delle opzioni
-  buttons.forEach(btn => btn.disabled = true);
+  // Disabilita bottoni
+  allButtons.forEach(b => b.disabled = true);
   
-  const isCorrect = current.options[selectedIdx].correct;
+  // Modifica gli indicatori basandoti sugli impatti della scelta
+  safetyScore += choice.impactSafety;
+  riskScore += choice.impactRisk;
+  updateDashboardGauges();
   
-  if (isCorrect) {
-    score++;
-    clickedButton.classList.add('correct');
-    fbBox.className = 'feedback-box correct-fb';
-    fbBox.innerHTML = `<strong>Risposta Corretta!</strong><br>${current.explanation}`;
+  const banner = document.getElementById('feedbackBanner');
+  
+  if (choice.correct) {
+    correctAnswersCount++;
+    clickedBtn.classList.add('selected-correct');
+    banner.className = 'feedback-banner fb-good';
+    banner.innerHTML = `<strong>📈 Impatto Positivo:</strong> ${choice.feedback}`;
   } else {
-    clickedButton.classList.add('wrong');
-    fbBox.className = 'feedback-box wrong-fb';
+    clickedBtn.classList.add('selected-wrong');
+    banner.className = 'feedback-banner fb-bad';
+    banner.innerHTML = `<strong>⚠️ Impatto Negativo:</strong> ${choice.feedback}`;
     
-    // Evidenzia visivamente la risposta corretta per finalità didattica
-    buttons.forEach((btn, idx) => {
-      if (current.options[idx].correct) {
-        btn.classList.add('correct');
-      }
+    // Mostra la corretta per trasparenza didattica
+    allButtons.forEach((b, i) => {
+      if (scenario.choices[i].correct) b.classList.add('reveal-correct');
     });
-    fbBox.innerHTML = `<strong>Risposta Errata.</strong><br>${current.explanation}`;
   }
   
-  // Aggiorna contatore e mostra pulsante di avanzamento
-  document.getElementById('scoreCounter').textContent = `Corrette: ${score}`;
-  const nextBtn = document.getElementById('nextBtn');
+  const nextBtn = document.getElementById('btnNext');
   nextBtn.classList.remove('hidden');
-  
-  if (currentIdx === scenarios.length - 1) {
-    nextBtn.textContent = "Vedi i Risultati →";
+  if (currentTour === gameData.length - 1) {
+    nextBtn.textContent = "Genera Report di Turno →";
   } else {
-    nextBtn.textContent = "Scenario successivo →";
+    nextBtn.textContent = "Prosegui il turno →";
   }
 }
 
-function nextScenario() {
-  if (currentIdx < scenarios.length - 1) {
-    currentIdx++;
-    loadScenario();
+function advanceTour() {
+  if (currentTour < gameData.length - 1) {
+    currentTour++;
+    loadTour();
   } else {
-    showResults();
+    showSimulationResults();
   }
 }
 
-function showResults() {
-  document.getElementById('gamePage').classList.add('hidden');
-  document.getElementById('resultPage').classList.remove('hidden');
+function showSimulationResults() {
+  document.getElementById('gameScreen').classList.add('hidden');
+  document.getElementById('resultScreen').classList.remove('hidden');
   
-  const pct = (score / scenarios.length) * 100;
-  const emojiEl = document.getElementById('resultEmoji');
-  const titleEl = document.getElementById('resultTitle');
-  const msgEl = document.getElementById('resultMsg');
+  const icon = document.getElementById('resIcon');
+  const title = document.getElementById('resTitle');
+  const desc = document.getElementById('resDesc');
   
-  // Logica delle emoji e dei messaggi basata su percentuali da specifiche standard
-  if (pct >= 80) {
-    emojiEl.textContent = "🏆";
-    titleEl.textContent = "Eccellente!";
-    msgEl.textContent = `Hai superato il modulo rispondendo correttamente a ${score} scenari su ${scenarios.length} (${Math.round(pct)}%). Dimostri un'ottima comprensione del principio di effettività e delle responsabilità del preposto.`;
-  } else if (pct >= 50) {
-    emojiEl.textContent = "👍";
-    titleEl.textContent = "Buon Lavoro!";
-    msgEl.textContent = `Hai risposto correttamente a ${score} scenari su ${scenarios.length} (${Math.round(pct)}%). Il risultato è sufficiente, ma ti consigliamo un breve ripasso per assimilare al meglio le casistiche legate alla prevenzione di fatto.`;
+  if (riskScore <= 10 && safetyScore >= 80) {
+    icon.textContent = "🏆";
+    title.textContent = "Preposto Eccellente";
+    desc.textContent = `Hai completato la simulazione mantenendo il Rischio Sanzioni al minimo e la Sicurezza al massimo. Dimostri di dominare perfettamente il Principio di Effettività (Art. 299).`;
+  } else if (riskScore > 30) {
+    icon.textContent = "⚖️";
+    title.textContent = "Condanna Penale per Effettività";
+    desc.textContent = `Attenzione. Il tuo Rischio Sanzioni ha raggiunto il ${riskScore}%. Anche senza una delega scritta, l'attività direttiva di fatto ti ha reso legalmente responsabile delle violazioni di reparto. Ti consigliamo di rigiocare il modulo.`;
   } else {
-    emojiEl.textContent = "💪";
-    titleEl.textContent = "Richiede Ripasso";
-    msgEl.textContent = `Hai totalizzato ${score} risposte corrette su ${scenarios.length} (${Math.round(pct)}%). Ti invitiamo a rigiocare il modulo e analizzare attentamente le spiegazioni fornite nei singoli scenari aziendali.`;
+    icon.textContent = "👍";
+    title.textContent = "Gestione Sufficiente";
+    desc.textContent = `Turno completato con un livello di sicurezza accettabile. Ricorda però che per azzerare le sanzioni l'azione del preposto deve essere costante, tempestiva e focalizzata sulla vigilanza quotidiana.`;
   }
 }
 
 function resetGame() {
-  document.getElementById('resultPage').classList.add('hidden');
-  document.getElementById('gamePage').classList.add('hidden');
-  document.getElementById('instrPage').classList.remove('hidden');
+  document.getElementById('resultScreen').classList.add('hidden');
+  document.getElementById('gameScreen').classList.add('hidden');
+  document.getElementById('introScreen').classList.remove('hidden');
 }
 </script>
-
 </body>
 </html>
